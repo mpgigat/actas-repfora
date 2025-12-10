@@ -1,0 +1,22 @@
+{
+  "modelo": "medium",
+  "idioma": "es", 
+  "device": "auto",
+  "compute_type": "auto",
+  "batch_size": "auto",
+  "chunk_length": 30,
+  "usar_diarizacion": true,
+  "usar_gpu": true,
+  "optimizaciones": {
+    "procesamiento_paralelo": true,
+    "cache_modelos": true,
+    "vectorizacion": true,
+    "limpieza_batch": true
+  },
+  "token_huggingface": "${HF_TOKEN}",
+  "gemini": {
+    "modelo": "gemini-2.5-flash",
+    "temperatura": 0.3,
+    "max_tokens": 8192
+  }
+}

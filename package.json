@@ -1,0 +1,25 @@
+{
+  "name": "sistema-transcripcion-sena-simple",
+  "version": "1.0.0",
+  "description": "Sistema simplificado de transcripción y generación de actas SENA",
+  "main": "src/js/transcribir.js",
+  "scripts": {
+    "transcribir": "node src/js/transcribir.js",
+    "generar-acta": "node src/js/generar_acta.js",
+    "corregir-transcripcion": "node src/js/corregir_transcripcion.js",
+    "preprocesar": "node src/js/preprocesar_audio.js",
+    "test": "node --test",
+    "start-server": "node src/server/index.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.2.1",
+    "archiver": "^7.0.1",
+    "docxtemplater": "^3.42.0",
+    "dotenv": "^16.3.1",
+    "express": "^5.1.0",
+    "multer": "^2.0.2",
+    "pizzip": "^3.1.4",
+    "zip-stream": "^6.0.1",
+    "docx-preview": "^0.3.6"
+  }
+}
