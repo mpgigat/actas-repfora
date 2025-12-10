@@ -17,11 +17,15 @@ runStartupPurge();
 setInterval(runStartupPurge, TTL);
 const upload = multer({ dest: 'uploads/' });
 
+console.log('🔍 __dirname:', __dirname);
+console.log('🔍 process.cwd():', process.cwd());
+
 const publicDir = path.join(__dirname, '..', '..', 'public');
 console.log('📁 Directorio public:', publicDir);
 console.log('📁 ¿Existe el directorio?', fs.existsSync(publicDir));
 if (fs.existsSync(publicDir)) {
   console.log('📄 Archivos en public:', fs.readdirSync(publicDir));
+  console.log('📄 Contenido de styles.css:', fs.readFileSync(path.join(publicDir, 'styles.css'), 'utf8').substring(0, 100));
 }
 
 const indexPath = path.join(publicDir, 'index.html');
@@ -29,8 +33,15 @@ const indexHtml = fs
   .readFileSync(indexPath, 'utf8')
   .replace('%API_BASE_PATH%', JSON.stringify(API_BASE_PATH));
 
+// Log de todas las peticiones
+app.use((req, res, next) => {
+  console.log(`📥 ${req.method} ${req.url}`);
+  next();
+});
+
 // Servir index.html con la variable API_BASE_PATH inyectada (ANTES de static)
 app.get('/', (req, res) => {
+  console.log('✅ Sirviendo index.html personalizado');
   res.setHeader('Content-Type', 'text/html');
   res.send(indexHtml);
 });
