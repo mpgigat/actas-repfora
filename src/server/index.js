@@ -47,7 +47,15 @@ app.get('/', (req, res) => {
 });
 
 // Servir archivos estáticos de la carpeta public (CSS, JS, etc.)
+app.use((req, res, next) => {
+  console.log(`🔄 Middleware static - Intentando servir: ${req.url}`);
+  next();
+});
 app.use(express.static(publicDir));
+app.use((req, res, next) => {
+  console.log(`⚠️  Archivo no encontrado en static: ${req.url}`);
+  next();
+});
 
 // Conexiones SSE activas
 const conexiones = new Map();
