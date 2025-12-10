@@ -18,6 +18,12 @@ setInterval(runStartupPurge, TTL);
 const upload = multer({ dest: 'uploads/' });
 
 const publicDir = path.join(__dirname, '..', '..', 'public');
+console.log('📁 Directorio public:', publicDir);
+console.log('📁 ¿Existe el directorio?', fs.existsSync(publicDir));
+if (fs.existsSync(publicDir)) {
+  console.log('📄 Archivos en public:', fs.readdirSync(publicDir));
+}
+
 const indexPath = path.join(publicDir, 'index.html');
 const indexHtml = fs
   .readFileSync(indexPath, 'utf8')
@@ -207,5 +213,5 @@ app.use(API_BASE_PATH, router);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Servidor escuchando en http://localhost:${PORT}`);
+  console.log(`Servidor escuchando http://localhost:${PORT}`);
 });
