@@ -11,9 +11,22 @@ import sys
 import time
 import warnings
 
+from pathlib import Path
 from typing import Optional, Tuple
 
 from utilidades_nombres import cargar_json, guardar_json
+
+# Cargar variables de entorno desde .env
+try:
+    from dotenv import load_dotenv
+    # Buscar el archivo .env en el directorio raíz del proyecto
+    env_path = Path(__file__).parent.parent.parent / '.env'
+    if env_path.exists():
+        load_dotenv(env_path)
+    else:
+        load_dotenv()  # Intenta cargar desde el directorio actual
+except ImportError:
+    pass  # dotenv no instalado, continuar sin cargar .env
 
 try:  # noqa: WPS440 - se desea informar errores al usuario final
     import torch
