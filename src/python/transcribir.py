@@ -19,14 +19,33 @@ from utilidades_nombres import cargar_json, guardar_json
 # Cargar variables de entorno desde .env
 try:
     from dotenv import load_dotenv
-    # Buscar el archivo .env en el directorio raíz del proyecto
-    env_path = Path(__file__).parent.parent.parent / '.env'
-    if env_path.exists():
-        load_dotenv(env_path)
-    else:
-        load_dotenv()  # Intenta cargar desde el directorio actual
+    # Buscar el archivo .env en múltiples ubicaciones posibles
+    possible_paths = [
+        Path(__file__).parent.parent.parent / '.env',  # Raíz del proyecto
+        Path.cwd() / '.env',  # Directorio actual
+        Path('/home/coordinador/actas-repfora/.env'),  # Ruta absoluta en producción
+    ]
+
+    loaded = False
+    for env_path in possible_paths:
+        if env_path.exists():
+            load_dotenv(env_path)
+            loaded = True
+            break
+
+    if not loaded:
+        load_dotenv()  # Intenta cargar desde variables de entorno del sistema
 except ImportError:
-    pass  # dotenv no instalado, continuar sin cargar .env
+    # dotenv no instalado, intentar leer directamente del archivo .env
+    for env_path in [Path(__file__).parent.parent.parent / '.env', Path('/home/coordinador/actas-repfora/.env')]:
+        if env_path.exists():
+            with open(env_path) as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith('#') and '=' in line:
+                        key, value = line.split('=', 1)
+                        os.environ[key.strip()] = value.strip()
+            break
 
 try:  # noqa: WPS440 - se desea informar errores al usuario final
     import torch
@@ -101,6 +120,12 @@ def setup_environment(args: argparse.Namespace) -> Tuple[Optional[str], str]:
     if not token_hf:
         print("⚠️  Variable HF_TOKEN no configurada; la diarización no se ejecutará.")
         print("💡  Configura tu token con: export HF_TOKEN=tu_token_de_huggingface")
+        # Debug: mostrar todas las variables de entorno que empiezan con HF
+        hf_vars = {k: v[:10] + "..." if len(v) > 10 else v for k, v in os.environ.items() if k.startswith("HF")}
+        if hf_vars:
+            print(f"🔍 Variables HF encontradas: {hf_vars}")
+    else:
+        print(f"✅ HF_TOKEN configurado correctamente (termina en ...{token_hf[-4:]})")
 
     device = args.device or ("cuda" if torch.cuda.is_available() else "cpu")
 
