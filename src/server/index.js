@@ -33,8 +33,12 @@ const indexHtml = fs
   .readFileSync(indexPath, 'utf8')
   .replace('%API_BASE_PATH%', JSON.stringify(API_BASE_PATH));
 
-// Log de todas las peticiones
+// Deshabilitar caché COMPLETAMENTE
 app.use((req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  res.setHeader('Surrogate-Control', 'no-store');
   console.log(`📥 ${req.method} ${req.url}`);
   next();
 });

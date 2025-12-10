@@ -60,9 +60,11 @@ async function transcribirUnaParte(
       if (onProgress) onProgress('0');
 
       let errorOutput = '';
+      let stdoutOutput = '';
 
       subproceso.stdout.on('data', data => {
         const texto = data.toString();
+        stdoutOutput += texto;
         texto.split(/\r?\n/).forEach(linea => {
           const limpio = linea.trim();
           if (!limpio) return;
@@ -93,9 +95,20 @@ async function transcribirUnaParte(
           onProgress && onProgress('100');
           resolver();
         } else {
-          const errorMsg = errorOutput.trim()
-            ? `transcribir.py terminó con código ${codigo}. Error: ${errorOutput.slice(-500)}`
-            : `transcribir.py terminó con código ${codigo}`;
+          // Capturar tanto stderr como las últimas líneas de stdout
+          const ultimasLineasStdout = stdoutOutput.trim().split('\n').slice(-10).join('\n');
+          const ultimasLineasStderr = errorOutput.trim().slice(-500);
+
+          let errorMsg = `transcribir.py terminó con código ${codigo}`;
+
+          if (ultimasLineasStderr) {
+            errorMsg += `\n\nSTDERR:\n${ultimasLineasStderr}`;
+          }
+
+          if (ultimasLineasStdout && !ultimasLineasStdout.match(/^\d+$/)) {
+            errorMsg += `\n\nÚltimas líneas de STDOUT:\n${ultimasLineasStdout}`;
+          }
+
           rechazar(new Error(errorMsg));
         }
       });
