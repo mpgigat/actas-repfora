@@ -53,7 +53,12 @@ async function transcribirUnaParte(
         ['-u', scriptPythonTranscribir, archivoParteInfo.rutaCompleta, ...argumentosExtraPython],
         {
           cwd: directorioDelProyecto,
-          stdio: ['ignore', 'pipe', 'pipe']
+          stdio: ['ignore', 'pipe', 'pipe'],
+          env: {
+            ...process.env,  // Heredar todas las variables de entorno de Node.js
+            HF_TOKEN: process.env.HF_TOKEN,  // Asegurar que HF_TOKEN se pasa
+            PYTHONIOENCODING: 'utf-8'
+          }
         }
       );
 
