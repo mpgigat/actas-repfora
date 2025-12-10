@@ -3,7 +3,7 @@ require('dotenv').config();
 module.exports = {
   apps: [
     {
-      name: 'sena-transcripcion',
+      name: 'actas-repfora',
       script: './src/server/index.js',
       instances: 1,
       autorestart: true,
