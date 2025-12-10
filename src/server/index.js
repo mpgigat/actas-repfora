@@ -23,13 +23,13 @@ const indexHtml = fs
   .readFileSync(indexPath, 'utf8')
   .replace('%API_BASE_PATH%', JSON.stringify(API_BASE_PATH));
 
+// Servir archivos estáticos de la carpeta public (debe ir ANTES de las rutas)
+app.use(express.static(publicDir));
 // Servir index.html con la variable API_BASE expuesta
 app.get(['/', '/index.html'], (req, res) => {
   res.setHeader('Content-Type', 'text/html');
   res.send(indexHtml);
 });
-// Servir archivos estáticos de la carpeta public
-app.use(express.static(publicDir));
 // Conexiones SSE activas
 const conexiones = new Map();
 // Archivos generados por ID con persistencia en disco
